@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Profile - iSpani</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .profile-main{padding:40px 0 80px}
+    .profile-section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:#111;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #e5e7eb}
+    .achievement-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f3f4f6}
+    .achievement-item:last-child{border:none}
+    .achievement-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+    .exp-item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f3f4f6;font-size:14px}
+    .exp-item:last-child{border:none}
+    .exp-title{font-weight:600;color:#111}
+    .exp-org{color:#6b7280;margin-top:3px}
+    .exp-year{color:#1a7a3a;font-weight:600;white-space:nowrap}
+    .profile-content-card{background:white;border-radius:20px;border:1px solid #e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,0.06);padding:28px;margin-bottom:24px}
+    .breadcrumb{font-size:13px;color:#9ca3af;margin-bottom:24px}
+    .breadcrumb a{color:#1a7a3a;font-weight:500}
+    .breadcrumb a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+<div id="nav-root"></div>
+<div class="profile-main">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Home</a> › <a href="browse.html">Browse</a> › <span id="breadcrumb-name">Profile</span></div>
+    <div class="profile-layout" id="profile-layout">
+      <div style="text-align:center;padding:80px;color:#9ca3af">Loading...</div>
+    </div>
+  </div>
+</div>
+<div id="footer-root"></div>
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close">✕</span>
+  <img src="" alt="" id="lb-img">
+</div>
+<script src="data.js"></script>
+<script src="nav.js"></script>
+<script>
+document.getElementById('nav-root').innerHTML=renderNav('browse.html');
+document.getElementById('footer-root').innerHTML=renderFooter();
+updateBadges();
+
+const params=new URLSearchParams(window.location.search);
+const id=parseInt(params.get('id'));
+const student=STUDENTS.find(s=>s.id===id);
+
+if(!student){
+  document.getElementById('profile-layout').innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">😕</div><div class="empty-title">Student not found</div><div class="empty-sub">This profile may have been removed.</div><a href="browse.html" class="btn btn-primary">Browse Students</a></div>`;
+} else {
+  document.title=`${student.firstName} ${student.lastName} - iSpani`;
+  document.getElementById('breadcrumb-name').textContent=`${student.firstName} ${student.lastName}`;
+  renderProfile(student);
+}
+
+function renderProfile(s){
+  const disc=s.discount?Math.round(s.hourlyRate*(1-s.discount/100)):null;
+  const wl=isInWishlist(s.id);
+  const inCartService=isInCart(s.id,'service');
+  const inCartCall=isInCart(s.id,'call');
+
+  document.getElementById('profile-layout').innerHTML=`
+  <!-- SIDEBAR -->
+  <aside class="profile-sidebar">
+    <img class="profile-photo" src="${s.photo}" alt="${s.firstName} ${s.lastName}">
+    <div class="profile-sidebar-body">
+      <div class="profile-name">${s.firstName} ${s.lastName}</div>
+      <div class="profile-meta">Age ${s.age} · ${s.university}</div>
+      <div class="profile-meta" style="margin-top:6px">${s.degreeType} ${s.degreeName} · Year ${s.yearOfStudy}</div>
+      <div class="availability-badge ${s.available?'avail-yes':'avail-no'}" style="margin-top:14px">
+        <span class="avail-dot"></span>${s.available?'Available for Work':'Currently Busy'}
+      </div>
+      <div class="card-rating" style="margin-bottom:16px">${renderStars(s.rating)}<span class="rating-score">${s.rating}</span><span class="rating-count"> (${s.reviewCount} reviews)</span></div>
+      <div class="rate-box">
+        <div class="rate-row">
+          <span class="rate-label">💼 Project Rate</span>
+          <span class="rate-value">${disc?`<span style="text-decoration:line-through;color:#9ca3af;font-size:14px">R${s.hourlyRate}</span> <span style="color:#1a7a3a">R${disc}</span>`:`R${s.hourlyRate}`}<small>/hr</small></span>
+        </div>
+        <div class="rate-row">
+          <span class="rate-label">📞 Discovery Call</span>
+          <span class="rate-value">R${s.callRate}<small>/call</small></span>
+        </div>
+        ${s.discount?`<div style="text-align:center;background:#fff3cd;border-radius:8px;padding:6px;font-size:12px;font-weight:700;color:#92400e;margin-top:8px">🔥 ${s.discount}% DISCOUNT THIS WEEK</div>`:''}
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#9ca3af;margin-bottom:10px">Soft Skills</div>
+        <div class="skill-chips">${s.softSkills.map(sk=>`<span class="chip chip-green">${sk}</span>`).join('')}</div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#9ca3af;margin-bottom:8px">Specialisation</div>
+        <div class="card-service" style="display:inline-flex"><span class="card-service-icon">${SERVICE_ICONS[s.serviceCategory]}</span>${s.service}</div>
+      </div>
+      <div class="profile-actions">
+        <button class="btn btn-primary" id="cart-service-btn" onclick="handleCartService()">
+          ${inCartService?'✓ Service Added':'+ Add Service to Cart'}
+        </button>
+        <button class="btn btn-outline" id="cart-call-btn" onclick="handleCartCall()">
+          ${inCartCall?'✓ Call Booked':'📞 Book Discovery Call'}
+        </button>
+        <button class="btn btn-ghost" id="wishlist-btn" onclick="handleWishlist()" style="border:1.5px solid #e5e7eb">
+          ${wl?'♥ Saved to Wishlist':'♡ Save to Wishlist'}
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <div class="profile-content-card">
+      <div class="profile-section-title">About ${s.firstName}</div>
+      <p style="font-size:15px;color:#374151;line-height:1.8">${s.bio}</p>
+    </div>
+
+    ${s.achievements.length?`
+    <div class="profile-content-card">
+      <div class="profile-section-title">🏆 Achievements</div>
+      ${s.achievements.map(a=>`<div class="achievement-item"><span class="achievement-icon">🎖️</span><span style="font-size:14px;color:#374151">${a}</span></div>`).join('')}
+    </div>`:''}
+
+    ${s.experience.length?`
+    <div class="profile-content-card">
+      <div class="profile-section-title">💼 Experience</div>
+      ${s.experience.map(e=>`
+        <div class="exp-item">
+          <div><div class="exp-title">${e.title}</div><div class="exp-org">${e.org}</div></div>
+          <span class="exp-year">${e.year}</span>
+        </div>`).join('')}
+    </div>`:''}
+
+    <div class="profile-content-card">
+      <div class="profile-section-title">📸 Portfolio</div>
+      <div class="gallery-label">Work Portfolio</div>
+      <div class="gallery-grid" style="margin-bottom:20px">
+        ${s.workPhotos.map(p=>`<img class="gallery-img" src="${p}" alt="Work" onclick="openLightbox('${p}')" loading="lazy">`).join('')}
+      </div>
+      <div class="gallery-label">Life Outside Work</div>
+      <div class="gallery-grid">
+        ${s.funPhotos.map(p=>`<img class="gallery-img" src="${p}" alt="Life" onclick="openLightbox('${p}')" loading="lazy">`).join('')}
+      </div>
+    </div>
+
+    <!-- CTA in content -->
+    <div style="background:linear-gradient(135deg,#062516,#1a7a3a);border-radius:20px;padding:28px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:20px">
+      <div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:white">Ready to work with ${s.firstName}?</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.7);margin-top:4px">Add to cart or book a call to get started today.</div>
+      </div>
+      <button class="btn btn-primary" style="background:white;color:#1a5c35;white-space:nowrap" onclick="handleCartService()">Add to Cart</button>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="profile-content-card">
+      <div class="profile-section-title">⭐ Client Reviews (${s.reviews.length})</div>
+      ${s.reviews.length?s.reviews.map(r=>`
+        <div class="review-card">
+          <div class="review-header">
+            <span class="review-company">${r.company}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:#f59e0b">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+              <span class="review-date">${r.date}</span>
+            </div>
+          </div>
+          <div class="review-text">"${r.text}"</div>
+        </div>`).join(''):
+        `<div style="text-align:center;padding:32px;color:#9ca3af">
+          <div style="font-size:32px;margin-bottom:8px">📝</div>
+          <div>No reviews yet - be the first to work with ${s.firstName}!</div>
+        </div>`
+      }
+    </div>
+  </main>`;
+}
+
+function handleCartService(){
+  addToCart(student.id,'service');
+  document.getElementById('cart-service-btn').textContent='✓ Service Added';
+  document.getElementById('cart-service-btn').style.background='#0d6e2e';
+}
+function handleCartCall(){
+  addToCart(student.id,'call');
+  document.getElementById('cart-call-btn').textContent='✓ Call Booked';
+  document.getElementById('cart-call-btn').style.borderColor='#1a7a3a';
+  document.getElementById('cart-call-btn').style.color='#1a7a3a';
+}
+function handleWishlist(){
+  const added=toggleWishlist(student.id);
+  document.getElementById('wishlist-btn').textContent=added?'♥ Saved to Wishlist':'♡ Save to Wishlist';
+  updateBadges();
+  showToast(added?'Added to wishlist!':'Removed from wishlist');
+}
+function openLightbox(src){document.getElementById('lb-img').src=src;document.getElementById('lightbox').classList.add('open');}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
+document.getElementById('lightbox').querySelector('.lightbox-close').addEventListener('click',closeLightbox);
+</script>
+</body>
+</html>

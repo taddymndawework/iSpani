@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Cart - iSpani</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .cart-page{padding:48px 0 80px}
+    .cart-empty{text-align:center;padding:100px 20px}
+    .promo-input{display:flex;gap:10px;margin-bottom:16px}
+    .promo-input input{flex:1;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none}
+    .promo-input input:focus{border-color:#1a7a3a}
+    .cart-header{background:#f9fafb;padding:16px 24px;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:72px 1fr auto auto;gap:20px;align-items:center}
+    .cart-header span{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#9ca3af}
+    .cart-qty{display:flex;align-items:center;gap:10px}
+    .qty-btn{width:30px;height:30px;border-radius:6px;border:1.5px solid #e5e7eb;background:white;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;color:#374151}
+    .qty-btn:hover{border-color:#1a7a3a;color:#1a7a3a}
+    .qty-num{font-weight:700;min-width:20px;text-align:center}
+    .trust-badges{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap}
+    .trust-badge{display:flex;align-items:center;gap:8px;font-size:12px;color:#6b7280;font-weight:500}
+    .confirmed-wrap{max-width:540px;margin:0 auto;text-align:center;padding:80px 20px}
+    .confirmed-wrap .icon{font-size:72px;margin-bottom:20px}
+    .confirmed-wrap h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:#111;margin-bottom:12px}
+    .confirmed-wrap p{color:#6b7280;font-size:16px;line-height:1.7;margin-bottom:28px}
+    .form-label{font-size:13px;font-weight:600;color:#374151;margin-bottom:5px;display:block}
+    textarea.form-input{resize:vertical;min-height:80px}
+  </style>
+</head>
+<body>
+<div id="nav-root"></div>
+<div class="page-header">
+  <div class="container">
+    <h1>🛒 My Cart</h1>
+    <p>Review your selected services and confirm your booking.</p>
+  </div>
+</div>
+<div class="cart-page">
+  <div class="container" id="cart-root"></div>
+</div>
+<div id="footer-root"></div>
+<script src="data.js"></script>
+<script src="nav.js"></script>
+<script>
+document.getElementById('nav-root').innerHTML=renderNav('');
+document.getElementById('footer-root').innerHTML=renderFooter();
+updateBadges();
+renderCartPage();
+
+function renderCartPage(){
+  const root=document.getElementById('cart-root');
+  if(!cart.length){
+    root.innerHTML=`
+      <div class="cart-empty">
+        <div style="font-size:64px;margin-bottom:20px">🛒</div>
+        <div class="empty-title">Your cart is empty</div>
+        <div class="empty-sub">Browse student profiles and add services or book discovery calls.</div>
+        <a href="browse.html" class="btn btn-primary" style="margin-top:20px">Browse Talent</a>
+      </div>`;
+    return;
+  }
+
+  root.innerHTML=`
+  <div style="display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start">
+    <!-- CART ITEMS -->
+    <div>
+      <div class="cart-table">
+        <div class="cart-header">
+          <span></span><span>Service</span><span style="text-align:right">Qty</span><span style="text-align:right">Subtotal</span>
+        </div>
+        <div id="cart-items-list"></div>
+      </div>
+      <div class="trust-badges" style="margin-top:20px">
+        <div class="trust-badge">🔒 Secure Checkout</div>
+        <div class="trust-badge">✅ Verified Students</div>
+        <div class="trust-badge">⭐ Reviewed by Businesses</div>
+        <div class="trust-badge">🇿🇦 South African Platform</div>
+      </div>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      <div id="summary-rows"></div>
+      <div class="summary-total"><span>Total</span><span id="summary-total-val">R0</span></div>
+
+      <div style="margin-top:20px">
+        <div class="promo-input">
+          <input type="text" id="promo-input" placeholder="Promo / discount code">
+          <button class="btn btn-outline btn-sm" onclick="applyPromo()">Apply</button>
+        </div>
+        <div id="promo-msg" style="font-size:13px;margin-bottom:8px"></div>
+      </div>
+
+      <hr class="divider">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:#111;margin-bottom:14px">Contact Details</div>
+      <form class="checkout-form" onsubmit="handleCheckout(event)">
+        <div>
+          <label class="form-label">Company / Business Name *</label>
+          <input class="form-input" type="text" id="co-name" placeholder="e.g. Dlamini Logistics" required>
+        </div>
+        <div>
+          <label class="form-label">Your Name *</label>
+          <input class="form-input" type="text" id="co-contact" placeholder="Full name" required>
+        </div>
+        <div>
+          <label class="form-label">Email Address *</label>
+          <input class="form-input" type="email" id="co-email" placeholder="email@company.co.za" required>
+        </div>
+        <div>
+          <label class="form-label">Phone Number</label>
+          <input class="form-input" type="tel" id="co-phone" placeholder="+27 xx xxx xxxx">
+        </div>
+        <div>
+          <label class="form-label">Project Description</label>
+          <textarea class="form-input" id="co-msg" placeholder="Briefly describe what you need help with..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:16px;font-size:16px;border-radius:12px;margin-top:4px">
+          Confirm Booking →
+        </button>
+      </form>
+    </div>
+  </div>`;
+
+  renderCartItems();
+  renderSummary();
+}
+
+function renderCartItems(){
+  const list=document.getElementById('cart-items-list');
+  if(!list)return;
+  list.innerHTML=cart.map(item=>`
+    <div class="cart-item">
+      <img class="cart-item-img" src="${item.photo}" alt="${item.name}">
+      <div>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-service">${item.service}
+          ${item.discount?`<span style="background:#fff3cd;color:#92400e;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;margin-left:6px">${item.discount}% OFF</span>`:''}
+        </div>
+        <div style="font-size:13px;color:#9ca3af;margin-top:4px">
+          ${item.discount?`<span style="text-decoration:line-through">R${item.rate}/hr</span> → <span style="color:#1a7a3a;font-weight:700">R${item.discountedRate}/hr</span>` : `R${item.rate}/hr`}
+        </div>
+      </div>
+      <div class="cart-qty">
+        <button class="qty-btn" onclick="changeQty(${item.studentId},'${item.type}',-1)">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${item.studentId},'${item.type}',1)">+</button>
+      </div>
+      <div style="text-align:right">
+        <div class="cart-item-price">R${(item.discountedRate*item.qty).toLocaleString()}</div>
+        <button class="cart-remove" onclick="removeItem(${item.studentId},'${item.type}')" title="Remove">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSummary(){
+  const rows=document.getElementById('summary-rows');
+  const totalEl=document.getElementById('summary-total-val');
+  if(!rows||!totalEl)return;
+  rows.innerHTML=cart.map(i=>`
+    <div class="summary-row">
+      <span>${i.name} - ${i.service} ×${i.qty}</span>
+      <span>R${(i.discountedRate*i.qty).toLocaleString()}</span>
+    </div>`).join('');
+  totalEl.textContent='R'+cartTotal().toLocaleString();
+}
+
+function changeQty(sid,type,delta){
+  const item=cart.find(i=>i.studentId===sid&&i.type===type);
+  if(!item)return;
+  item.qty=Math.max(1,item.qty+delta);
+  saveCart();updateBadges();renderCartItems();renderSummary();
+}
+
+function removeItem(sid,type){
+  removeFromCart(sid,type);
+  renderCartItems();renderSummary();
+  if(!cart.length)renderCartPage();
+}
+
+let promoApplied=false;
+function applyPromo(){
+  const code=document.getElementById('promo-input').value.trim().toUpperCase();
+  const msg=document.getElementById('promo-msg');
+  if(code==='ISPANI10'&&!promoApplied){
+    msg.innerHTML='<span style="color:#1a7a3a;font-weight:600">✓ Promo code applied - 10% extra off!</span>';
+    promoApplied=true;
+  } else if(promoApplied){
+    msg.innerHTML='<span style="color:#f59e0b;font-weight:600">A promo code is already applied.</span>';
+  } else {
+    msg.innerHTML='<span style="color:#e74c3c;font-weight:600">Invalid promo code. Try ISPANI10.</span>';
+  }
+}
+
+function handleCheckout(e){
+  e.preventDefault();
+  const name=document.getElementById('co-name').value;
+  const contact=document.getElementById('co-contact').value;
+  const email=document.getElementById('co-email').value;
+  // Clear cart
+  cart=[];saveCart();updateBadges();
+  // Show confirmation
+  document.getElementById('cart-root').innerHTML=`
+    <div class="confirmed-wrap">
+      <div class="icon">🎉</div>
+      <h2>Booking Confirmed!</h2>
+      <p>Thank you, <strong>${contact}</strong> from <strong>${name}</strong>!<br>
+      A confirmation has been sent to <strong>${email}</strong>.<br><br>
+      The student will reach out to you within 24 hours to discuss your project. We're excited to connect you with South Africa's top student talent!</p>
+      <a href="browse.html" class="btn btn-primary btn-lg">Browse More Talent</a>
+      <a href="index.html" class="btn btn-outline btn-lg" style="margin-top:12px;display:inline-block">Back to Home</a>
+    </div>`;
+}
+</script>
+</body>
+</html>

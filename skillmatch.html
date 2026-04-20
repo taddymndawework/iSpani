@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillMatch Wizard - iSpani</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body{background:#f9fafb}
+    .wizard-page{min-height:calc(100vh - 68px);padding:48px 0 80px}
+    .wizard-intro{text-align:center;margin-bottom:48px}
+    .wizard-intro h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:800;color:#0a0a0a;letter-spacing:-1px;margin-bottom:10px}
+    .wizard-intro p{font-size:17px;color:#6b7280;max-width:520px;margin:0 auto}
+    .step-labels{display:flex;justify-content:center;gap:0;margin-bottom:6px}
+    .step-label{flex:1;max-width:160px;text-align:center;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px}
+    .step-label.active{color:#1a7a3a}
+    .wizard-progress-bar{display:flex;align-items:center;margin-bottom:40px;max-width:560px;margin-left:auto;margin-right:auto}
+    .step-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;transition:all .4s}
+    .step-done{background:#1a7a3a;color:white;box-shadow:0 4px 14px rgba(26,122,58,0.4)}
+    .step-active{background:#1a7a3a;color:white;box-shadow:0 4px 14px rgba(26,122,58,0.4);animation:pulse-step 1.5s infinite}
+    .step-todo{background:#e5e7eb;color:#9ca3af}
+    @keyframes pulse-step{0%,100%{box-shadow:0 4px 14px rgba(26,122,58,0.4)}50%{box-shadow:0 4px 24px rgba(26,122,58,0.7)}}
+    .step-line{flex:1;height:4px;background:#e5e7eb;border-radius:2px;overflow:hidden;margin:0 6px}
+    .step-line-fill{height:100%;background:linear-gradient(90deg,#1a7a3a,#34c76a);width:0%;transition:width .6s ease}
+    .wizard-card{background:white;border-radius:28px;padding:52px;box-shadow:0 20px 60px rgba(0,0,0,0.1),0 4px 16px rgba(0,0,0,0.06);border:1px solid #f0f0f0;max-width:760px;margin:0 auto}
+    .wizard-q{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:#0a0a0a;margin-bottom:6px;letter-spacing:-0.5px}
+    .wizard-hint{font-size:15px;color:#9ca3af;margin-bottom:32px}
+    .opt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .opt-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .wizard-opt{background:#f9fafb;border:2px solid #e5e7eb;border-radius:18px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .3s cubic-bezier(0.34,1.56,0.64,1);position:relative}
+    .wizard-opt:hover{border-color:#34c76a;background:#f2fdf5;transform:translateY(-4px);box-shadow:0 8px 24px rgba(26,122,58,0.15)}
+    .wizard-opt.selected{border-color:#1a7a3a;background:#e4fbed;box-shadow:0 0 0 4px rgba(26,122,58,0.12);transform:translateY(-4px)}
+    .wizard-opt.selected::after{content:'✓';position:absolute;top:10px;right:12px;width:22px;height:22px;background:#1a7a3a;color:white;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+    .opt-icon{font-size:36px;margin-bottom:10px}
+    .opt-label{font-size:13px;font-weight:700;color:#1f2937;line-height:1.3}
+    .opt-sub{font-size:11px;color:#9ca3af;margin-top:4px}
+    .wizard-nav{display:flex;justify-content:space-between;align-items:center;margin-top:36px}
+    .budget-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .timeline-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    /* Results */
+    .results-header{text-align:center;margin-bottom:32px}
+    .results-header h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:#0a0a0a;margin-bottom:6px}
+    .results-header p{color:#6b7280;font-size:15px}
+    .match-card{background:white;border-radius:18px;padding:24px;border:2px solid #e5e7eb;display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;transition:all .3s;box-shadow:0 2px 8px rgba(0,0,0,0.05);cursor:pointer}
+    .match-card:hover{border-color:#34c76a;box-shadow:0 8px 32px rgba(26,122,58,0.15);transform:translateY(-3px)}
+    .match-rank{position:absolute;top:-8px;left:-8px;width:28px;height:28px;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;color:white}
+    .rank-1{background:linear-gradient(135deg,#f59e0b,#f97316)}
+    .rank-2{background:linear-gradient(135deg,#9ca3af,#6b7280)}
+    .rank-3{background:linear-gradient(135deg,#cd7f32,#a0522d)}
+    .rank-other{background:#e5e7eb;color:#6b7280}
+    .match-photo-wrap{position:relative;width:80px;height:80px}
+    .match-photo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.12)}
+    .match-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:#0a0a0a;margin-bottom:3px}
+    .match-meta{font-size:13px;color:#6b7280;margin-bottom:8px}
+    .match-rate{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;color:#1a7a3a}
+    .match-score-ring{width:68px;height:68px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:white;flex-shrink:0;position:relative}
+    .score-a{background:linear-gradient(135deg,#1a7a3a,#34c76a)}
+    .score-b{background:linear-gradient(135deg,#f59e0b,#fcd34d)}
+    .score-c{background:linear-gradient(135deg,#6b7280,#9ca3af)}
+    .score-ring-label{font-size:9px;font-weight:700;opacity:.85;letter-spacing:0.3px}
+    .match-actions{display:flex;flex-direction:column;gap:8px}
+    .restart-bar{text-align:center;margin-top:36px}
+    @media(max-width:600px){.opt-grid,.budget-grid,.timeline-grid{grid-template-columns:repeat(2,1fr)!important}.wizard-card{padding:32px 20px}}
+  </style>
+</head>
+<body>
+<div id="nav-root"></div>
+
+<div class="wizard-page">
+  <div class="container">
+    <div class="wizard-intro">
+      <div class="section-label" style="margin:0 auto 16px">✦ Innovative Feature</div>
+      <h1>SkillMatch Wizard</h1>
+      <p>Answer 3 quick questions and we'll rank the best-matched student freelancers for your exact need - no searching required.</p>
+    </div>
+
+    <!-- Progress -->
+    <div style="max-width:560px;margin:0 auto 40px">
+      <div class="step-labels" id="step-labels">
+        <span class="step-label active">1. Task Type</span>
+        <span class="step-label">2. Budget</span>
+        <span class="step-label">3. Timeline</span>
+        <span class="step-label">Results</span>
+      </div>
+      <div class="wizard-progress-bar">
+        <div class="step-dot step-active" id="dot-1">1</div>
+        <div class="step-line"><div class="step-line-fill" id="line-1"></div></div>
+        <div class="step-dot step-todo" id="dot-2">2</div>
+        <div class="step-line"><div class="step-line-fill" id="line-2"></div></div>
+        <div class="step-dot step-todo" id="dot-3">3</div>
+        <div class="step-line"><div class="step-line-fill" id="line-3"></div></div>
+        <div class="step-dot step-todo" id="dot-4">✦</div>
+      </div>
+    </div>
+
+    <!-- Wizard Card -->
+    <div class="wizard-card" id="wizard-card"></div>
+  </div>
+</div>
+
+<div id="footer-root"></div>
+<script src="data.js"></script>
+<script src="nav.js"></script>
+<script>
+document.getElementById('nav-root').innerHTML=renderNav('skillmatch.html');
+document.getElementById('footer-root').innerHTML=renderFooter();
+updateBadges();
+
+// Wizard State
+let step=1;
+let answers={taskType:null,budget:null,timeline:null};
+
+const TASKS=[
+  {id:'webdev',icon:'💻',label:'Build / Fix a Website',sub:'Landing pages, web apps, portfolios'},
+  {id:'data',icon:'📊',label:'Data Analysis',sub:'Dashboards, reports, Excel, Power BI'},
+  {id:'database',icon:'🗃️',label:'Database Setup',sub:'SQL/NoSQL design, query optimisation'},
+  {id:'cybersecurity',icon:'🔒',label:'Security Audit',sub:'Pen testing, vulnerability scanning'},
+  {id:'networking',icon:'🌐',label:'Network Setup',sub:'WiFi, LAN, routers, VPN, cabling'},
+  {id:'appdev',icon:'📱',label:'Mobile App',sub:'Android, iOS, Flutter apps'},
+  {id:'itsupport',icon:'🛠️',label:'IT Support',sub:'Troubleshooting, setup, maintenance'},
+  {id:'any',icon:'🌟',label:'Not Sure / Other',sub:'Let us match you broadly'},
+];
+
+const BUDGETS=[
+  {id:'low',label:'Under R500',icon:'💚',max:500},
+  {id:'mid',label:'R500 – R2,000',icon:'💛',max:2000},
+  {id:'high',label:'R2,000 – R5,000',icon:'🧡',max:5000},
+  {id:'vhigh',label:'R5,000+',icon:'🔵',max:99999},
+];
+
+const TIMELINES=[
+  {id:'asap',icon:'⚡',label:'ASAP (1–3 days)',urgency:3},
+  {id:'week',icon:'📅',label:'Within a Week',urgency:2},
+  {id:'month',icon:'🗓️',label:'Within a Month',urgency:1},
+  {id:'flex',icon:'🌈',label:'Flexible',urgency:0},
+];
+
+// Progress UI 
+function updateProgress(){
+  [1,2,3,4].forEach(i=>{
+    const dot=document.getElementById('dot-'+i);
+    if(i<step){dot.className='step-dot step-done';dot.textContent=i<4?i:'✦';}
+    else if(i===step){dot.className='step-dot step-active';dot.textContent=i<4?i:'✦';}
+    else{dot.className='step-dot step-todo';dot.textContent=i<4?i:'✦';}
+  });
+  [1,2,3].forEach(i=>{
+    document.getElementById('line-'+i).style.width=step>i?'100%':'0%';
+  });
+  const labels=document.querySelectorAll('.step-label');
+  labels.forEach((l,i)=>l.classList.toggle('active',i+1===step));
+}
+
+// Render Steps 
+function render(){
+  updateProgress();
+  const card=document.getElementById('wizard-card');
+  if(step===1) card.innerHTML=renderStep1();
+  if(step===2) card.innerHTML=renderStep2();
+  if(step===3) card.innerHTML=renderStep3();
+  if(step===4) renderResults();
+}
+
+function renderStep1(){
+  return`
+    <div class="wizard-q">What do you need help with?</div>
+    <div class="wizard-hint">Choose the ICT task that best describes your need.</div>
+    <div class="opt-grid">
+      ${TASKS.map(t=>`
+        <div class="wizard-opt ${answers.taskType===t.id?'selected':''}" onclick="selectTask('${t.id}')">
+          <div class="opt-icon">${t.icon}</div>
+          <div class="opt-label">${t.label}</div>
+          <div class="opt-sub">${t.sub}</div>
+        </div>`).join('')}
+    </div>
+    <div class="wizard-nav">
+      <div></div>
+      <button class="btn btn-primary" onclick="nextStep()" ${!answers.taskType?'disabled style="opacity:0.4;cursor:not-allowed"':''}>
+        Next - Budget →
+      </button>
+    </div>`;
+}
+
+function renderStep2(){
+  return`
+    <div class="wizard-q">What's your budget for this project?</div>
+    <div class="wizard-hint">This helps us filter students whose rates fit your budget.</div>
+    <div class="budget-grid">
+      ${BUDGETS.map(b=>`
+        <div class="wizard-opt ${answers.budget===b.id?'selected':''}" onclick="selectBudget('${b.id}')">
+          <div class="opt-icon">${b.icon}</div>
+          <div class="opt-label">${b.label}</div>
+        </div>`).join('')}
+    </div>
+    <div class="wizard-nav">
+      <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep()" ${!answers.budget?'disabled style="opacity:0.4;cursor:not-allowed"':''}>
+        Next - Timeline →
+      </button>
+    </div>`;
+}
+
+function renderStep3(){
+  return`
+    <div class="wizard-q">How soon do you need it done?</div>
+    <div class="wizard-hint">We'll prioritise available students who can meet your timeline.</div>
+    <div class="timeline-grid">
+      ${TIMELINES.map(t=>`
+        <div class="wizard-opt ${answers.timeline===t.id?'selected':''}" onclick="selectTimeline('${t.id}')">
+          <div class="opt-icon">${t.icon}</div>
+          <div class="opt-label">${t.label}</div>
+        </div>`).join('')}
+    </div>
+    <div class="wizard-nav">
+      <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep()" ${!answers.timeline?'disabled style="opacity:0.4;cursor:not-allowed"':''}>
+        ✦ Find My Matches →
+      </button>
+    </div>`;
+}
+
+// Matching Algorithm
+function scoreStudent(s){
+  let score=0;
+
+  // 1. Service category match (highest weight: 50 pts)
+  const task=answers.taskType;
+  if(task==='any') score+=30;
+  else if(s.serviceCategory===task) score+=50;
+
+  // 2. Budget fit (30 pts)
+  const budgetObj=BUDGETS.find(b=>b.id===answers.budget);
+  if(budgetObj){
+    if(s.hourlyRate<=budgetObj.max) score+=30;
+    else if(s.hourlyRate<=budgetObj.max*1.3) score+=15; // close
+    // over budget: 0
+  }
+
+  // 3. Availability (10 pts)
+  const timeline=TIMELINES.find(t=>t.id===answers.timeline);
+  if(s.available) score+=10;
+  else if(timeline&&timeline.urgency===0) score+=5; // flexible - less penalty
+
+  // 4. Rating bonus (up to 8 pts)
+  score+=Math.round((s.rating-4)*16); // 4.0→0, 5.0→16 → cap at 8
+  score=Math.min(score+Math.round((s.rating-4)*8),score);
+
+  // 5. Review count bonus (up to 5 pts)
+  score+=Math.min(s.reviewCount,5);
+
+  return Math.min(score,100);
+}
+
+function renderResults(){
+  // Score all students
+  const scored=STUDENTS.map(s=>({...s,score:scoreStudent(s)}))
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,5);
+
+  const task=TASKS.find(t=>t.id===answers.taskType);
+  const budget=BUDGETS.find(b=>b.id===answers.budget);
+  const timeline=TIMELINES.find(t=>t.id===answers.timeline);
+
+  let html=`
+    <div class="results-header">
+      <div class="section-label" style="margin:0 auto 12px">✦ Your Matches</div>
+      <h2>We found your top matches!</h2>
+      <p>Based on: <strong>${task?task.label:''}</strong> · <strong>${budget?budget.label:''}</strong> · <strong>${timeline?timeline.label:''}</strong></p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">`;
+
+  scored.forEach((s,i)=>{
+    const pct=s.score;
+    const scoreClass=pct>=75?'score-a':pct>=50?'score-b':'score-c';
+    const rankClass=['rank-1','rank-2','rank-3','rank-other','rank-other'][i];
+    const medals=['🥇','🥈','🥉','#4','#5'];
+    const disc=s.discount?Math.round(s.hourlyRate*(1-s.discount/100)):null;
+
+    html+=`
+      <div class="match-card" onclick="window.location='profile.html?id=${s.id}'">
+        <div class="match-photo-wrap">
+          <div class="match-rank ${rankClass}">${i<3?medals[i]:i+1}</div>
+          <img class="match-photo" src="${s.photo}" alt="${s.firstName}">
+        </div>
+        <div>
+          <div class="match-name">${s.firstName} ${s.lastName}</div>
+          <div class="match-meta">${s.university.split(' ').slice(0,3).join(' ')} · ${s.degreeType} ${s.degreeName} · Year ${s.yearOfStudy}</div>
+          <div class="match-meta">${SERVICE_ICONS[s.serviceCategory]} ${s.service}</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+            <div class="card-rating">${renderStars(s.rating)}<span class="rating-score" style="font-size:13px">${s.rating}</span></div>
+            <div class="match-rate">${disc?`<span style="text-decoration:line-through;color:#9ca3af;font-size:13px;font-weight:400">R${s.hourlyRate}</span> R${disc}`:`R${s.hourlyRate}`}/hr</div>
+            ${s.available?'<span style="background:#e4fbed;color:#1a5c35;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700">● Available</span>':'<span style="background:#f3f4f6;color:#6b7280;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700">● Busy</span>'}
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px" onclick="event.stopPropagation()">
+          <div class="match-score-ring ${scoreClass}">
+            <span>${pct}%</span>
+            <span class="score-ring-label">MATCH</span>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addToCart(${s.id},'service')">+ Cart</button>
+          <button class="btn btn-outline btn-sm" onclick="window.location='profile.html?id=${s.id}'">View</button>
+        </div>
+      </div>`;
+  });
+
+  html+=`</div>
+    <div class="restart-bar">
+      <button class="btn btn-ghost" onclick="restartWizard()" style="border:1.5px solid #e5e7eb;margin-top:8px">↺ Start Over</button>
+      <a href="browse.html" class="btn btn-outline" style="margin-left:12px">Browse All Students</a>
+    </div>`;
+
+  document.getElementById('wizard-card').innerHTML=html;
+}
+
+// Controls ───
+function selectTask(id){answers.taskType=id;render();}
+function selectBudget(id){answers.budget=id;render();}
+function selectTimeline(id){answers.timeline=id;render();}
+
+function nextStep(){
+  if(step===1&&!answers.taskType)return;
+  if(step===2&&!answers.budget)return;
+  if(step===3&&!answers.timeline)return;
+  step++;
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function prevStep(){
+  if(step>1){step--;render();}
+}
+
+function restartWizard(){
+  answers={taskType:null,budget:null,timeline:null};
+  step=1;
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Init
+render();
+</script>
+</body>
+</html>

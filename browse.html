@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Talent — iSpani</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .results-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+    .results-count{font-size:15px;color:#6b7280}
+    .results-count strong{color:#111;font-weight:700}
+    .sort-select{border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:#374151;outline:none;background:white;cursor:pointer}
+    .sort-select:focus{border-color:#1a7a3a}
+    .search-sticky{background:white;padding:20px 0;border-bottom:1px solid #e5e7eb;position:sticky;top:68px;z-index:500}
+    .pagination{display:flex;gap:8px;justify-content:center;margin-top:40px}
+    .page-btn{width:40px;height:40px;border-radius:8px;border:1.5px solid #e5e7eb;background:white;font-size:14px;font-weight:600;color:#374151;cursor:pointer;transition:all .2s}
+    .page-btn:hover,.page-btn.active{background:#1a7a3a;border-color:#1a7a3a;color:white}
+    .filter-tag{display:inline-flex;align-items:center;gap:6px;background:#e4fbed;color:#1a5c35;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;margin:0 4px 4px 0}
+    .filter-tag button{color:#1a5c35;font-size:14px;line-height:1;cursor:pointer;background:none;border:none;font-weight:700}
+    @media(max-width:900px){.browse-layout{grid-template-columns:1fr!important}.filter-sidebar{position:static!important}}
+  </style>
+</head>
+<body>
+<div id="nav-root"></div>
+<div class="page-header">
+  <div class="container">
+    <h1>Browse Student Talent</h1>
+    <p>Discover verified university ICT students ready to help your business grow.</p>
+  </div>
+</div>
+<div class="search-sticky">
+  <div class="container">
+    <div class="search-bar" style="max-width:680px">
+      <input type="text" id="search-input" placeholder="Search by name, skill, service, or university..." oninput="applyFilters()">
+      <button class="search-btn" onclick="applyFilters()">Search</button>
+    </div>
+  </div>
+</div>
+<div style="padding:40px 0 80px">
+  <div class="container">
+    <div class="browse-layout" style="display:grid;grid-template-columns:260px 1fr;gap:32px;align-items:start">
+      <aside class="filter-sidebar">
+        <button class="filter-toggle-btn" aria-expanded="false">
+          <h3 style="margin:0">🎛 Filters</h3>
+          <span class="filter-toggle-icon">▾</span>
+        </button>
+        <div class="filter-body">
+        <div class="filter-group">
+          <h4>Service Category</h4>
+          <label class="filter-option"><input type="checkbox" value="webdev" class="cat-chk" onchange="applyFilters()"><label>💻 Web Development</label></label>
+          <label class="filter-option"><input type="checkbox" value="data" class="cat-chk" onchange="applyFilters()"><label>📊 Data Analysis</label></label>
+          <label class="filter-option"><input type="checkbox" value="database" class="cat-chk" onchange="applyFilters()"><label>🗃️ Database Management</label></label>
+          <label class="filter-option"><input type="checkbox" value="cybersecurity" class="cat-chk" onchange="applyFilters()"><label>🔒 Cybersecurity</label></label>
+          <label class="filter-option"><input type="checkbox" value="networking" class="cat-chk" onchange="applyFilters()"><label>🌐 Networking</label></label>
+          <label class="filter-option"><input type="checkbox" value="appdev" class="cat-chk" onchange="applyFilters()"><label>📱 Mobile App Dev</label></label>
+          <label class="filter-option"><input type="checkbox" value="itsupport" class="cat-chk" onchange="applyFilters()"><label>🛠️ IT Support</label></label>
+        </div>
+        <div class="filter-group">
+          <h4>Max Hourly Rate</h4>
+          <input type="range" class="filter-range" id="rate-filter" min="50" max="400" value="400" step="10" oninput="updateRateLabel();applyFilters()">
+          <div class="filter-range-labels"><span>R50</span><span id="rate-label">R400+</span></div>
+        </div>
+        <div class="filter-group">
+          <h4>Availability</h4>
+          <label class="filter-option"><input type="checkbox" id="avail-filter" onchange="applyFilters()"><label>Available Now Only</label></label>
+        </div>
+        <div class="filter-group">
+          <h4>Minimum Rating</h4>
+          <label class="filter-option"><input type="radio" name="rating" value="0" checked onchange="applyFilters()"><label>Any Rating</label></label>
+          <label class="filter-option"><input type="radio" name="rating" value="4" onchange="applyFilters()"><label>4★ and above</label></label>
+          <label class="filter-option"><input type="radio" name="rating" value="4.5" onchange="applyFilters()"><label>4.5★ and above</label></label>
+        </div>
+        <div class="filter-group">
+          <h4>Year of Study</h4>
+          <label class="filter-option"><input type="checkbox" value="1" class="year-chk" onchange="applyFilters()"><label>1st Year</label></label>
+          <label class="filter-option"><input type="checkbox" value="2" class="year-chk" onchange="applyFilters()"><label>2nd Year</label></label>
+          <label class="filter-option"><input type="checkbox" value="3" class="year-chk" onchange="applyFilters()"><label>3rd Year</label></label>
+          <label class="filter-option"><input type="checkbox" value="4" class="year-chk" onchange="applyFilters()"><label>4th Year+</label></label>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-primary btn-sm" onclick="applyFilters()">Apply Filters</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetFilters()">Reset All</button>
+        </div>
+        </div><!-- end filter-body -->
+      </aside>
+      <div>
+        <div id="active-filters" style="margin-bottom:12px;min-height:20px"></div>
+        <div class="results-bar">
+          <div class="results-count" id="results-count">Showing <strong>0</strong> students</div>
+          <select class="sort-select" id="sort-select" onchange="applyFilters()">
+            <option value="rating">Top Rated</option>
+            <option value="priceLow">Price: Low → High</option>
+            <option value="priceHigh">Price: High → Low</option>
+            <option value="reviews">Most Reviewed</option>
+          </select>
+        </div>
+        <div class="grid-2" id="results-grid"></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="footer-root"></div>
+<script src="data.js"></script>
+<script src="nav.js"></script>
+<script>
+document.getElementById('nav-root').innerHTML=renderNav('browse.html');
+document.getElementById('footer-root').innerHTML=renderFooter();
+updateBadges();
+
+const params=new URLSearchParams(window.location.search);
+const urlCat=params.get('cat'),urlQ=params.get('q');
+if(urlQ)document.getElementById('search-input').value=urlQ;
+if(urlCat&&urlCat!=='all'){const c=document.querySelector(`.cat-chk[value="${urlCat}"]`);if(c)c.checked=true;}
+
+let currentPage=1;
+const PER_PAGE=6;
+
+function updateRateLabel(){const v=document.getElementById('rate-filter').value;document.getElementById('rate-label').textContent=v==400?'R400+':'R'+v;}
+
+function getFilters(){
+  return{
+    cats:[...document.querySelectorAll('.cat-chk:checked')].map(c=>c.value),
+    years:[...document.querySelectorAll('.year-chk:checked')].map(c=>parseInt(c.value)),
+    maxRate:parseInt(document.getElementById('rate-filter').value),
+    availOnly:document.getElementById('avail-filter').checked,
+    minRating:parseFloat(document.querySelector('input[name=rating]:checked').value),
+    q:document.getElementById('search-input').value.toLowerCase().trim(),
+    sort:document.getElementById('sort-select').value
+  };
+}
+
+function renderCard(s){
+  const disc=s.discount?Math.round(s.hourlyRate*(1-s.discount/100)):null;
+  const wl=isInWishlist(s.id);
+  return`<div class="student-card" onclick="window.location='profile.html?id=${s.id}'">
+    <div class="card-photo-wrap">
+      <img src="${s.photo}" alt="${s.firstName}" loading="lazy">
+      <span class="card-badge-avail ${s.available?'badge-available':'badge-busy'}">${s.available?'● Available':'● Busy'}</span>
+      ${s.discount?`<span class="card-discount-badge">${s.discount}% OFF</span>`:''}
+      <button class="card-wishlist-btn ${wl?'wishlisted':''}" onclick="event.stopPropagation();handleWL(this,${s.id})">${wl?'♥':'♡'}</button>
+    </div>
+    <div class="card-body">
+      <div class="card-name">${s.firstName} ${s.lastName}</div>
+      <div class="card-degree">${s.degreeType} <strong>${s.degreeName}</strong> · Year ${s.yearOfStudy} · <span style="color:#1a7a3a">${s.university}</span></div>
+      <div class="card-service"><span class="card-service-icon">${SERVICE_ICONS[s.serviceCategory]||'💡'}</span>${s.service}</div>
+      <div class="skill-chips">${s.softSkills.map(sk=>`<span class="chip">${sk}</span>`).join('')}</div>
+      <div class="card-stats">
+        <div class="card-rating">${renderStars(s.rating)}<span class="rating-score">${s.rating}</span><span class="rating-count">(${s.reviewCount})</span></div>
+        <div class="card-rate">${s.discount?`<span class="original-rate">R${s.hourlyRate}</span><span class="discounted-rate">R${disc}</span>`:`R${s.hourlyRate}`}<small>/hr</small></div>
+      </div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-outline btn-sm" onclick="addToCart(${s.id},'call')">📞 Book Call</button>
+        <button class="btn btn-primary btn-sm" onclick="addToCart(${s.id},'service')">+ Add to Cart</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function handleWL(btn,id){const a=toggleWishlist(id);btn.innerHTML=a?'♥':'♡';btn.classList.toggle('wishlisted',a);updateBadges();showToast(a?'Added to wishlist!':'Removed from wishlist');}
+
+// Compute the filtered+sorted list without touching currentPage
+function getFilteredResults(){
+  const f=getFilters();
+  let results=STUDENTS.filter(s=>{
+    if(f.cats.length&&!f.cats.includes(s.serviceCategory))return false;
+    if(f.years.length&&!f.years.includes(s.yearOfStudy))return false;
+    if(f.maxRate<400&&s.hourlyRate>f.maxRate)return false;
+    if(f.availOnly&&!s.available)return false;
+    if(s.rating<f.minRating)return false;
+    if(f.q){const h=`${s.firstName} ${s.lastName} ${s.service} ${s.university} ${s.degreeName} ${s.softSkills.join(' ')}`.toLowerCase();if(!h.includes(f.q))return false;}
+    return true;
+  });
+  if(f.sort==='priceLow')results.sort((a,b)=>a.hourlyRate-b.hourlyRate);
+  else if(f.sort==='priceHigh')results.sort((a,b)=>b.hourlyRate-a.hourlyRate);
+  else if(f.sort==='reviews')results.sort((a,b)=>b.reviewCount-a.reviewCount);
+  else results.sort((a,b)=>b.rating-a.rating);
+  return results;
+}
+
+// Render whatever is in currentPage from the current filtered results
+function renderPage(){
+  const f=getFilters();
+  const results=getFilteredResults();
+  const total=results.length,pages=Math.ceil(total/PER_PAGE);
+
+  // Guard: if currentPage exceeds available pages, clamp it
+  if(currentPage>pages&&pages>0)currentPage=pages;
+
+  const slice=results.slice((currentPage-1)*PER_PAGE,currentPage*PER_PAGE);
+  document.getElementById('results-count').innerHTML=`Showing <strong>${total}</strong> student${total!==1?'s':''}`;
+  document.getElementById('results-grid').innerHTML=slice.length?slice.map(renderCard).join(''):`<div style="grid-column:1/-1;text-align:center;padding:60px 20px"><div style="font-size:48px">🔍</div><div class="empty-title">No students found</div><div class="empty-sub">Try adjusting your filters.</div><button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button></div>`;
+
+  // Active filter tags
+  let tags='';
+  if(f.q)tags+=`<span class="filter-tag">🔍 "${f.q}" <button onclick="clearQ()">✕</button></span>`;
+  f.cats.forEach(c=>tags+=`<span class="filter-tag">${SERVICE_ICONS[c]||''} ${c} <button onclick="removeCat('${c}')">✕</button></span>`);
+  document.getElementById('active-filters').innerHTML=tags;
+
+  // Pagination buttons
+  document.getElementById('pagination').innerHTML=pages>1?Array.from({length:pages},(_,i)=>`<button class="page-btn ${i+1===currentPage?'active':''}" onclick="goPage(${i+1})">${i+1}</button>`).join(''):'';
+}
+
+// Called by filters/search — resets to page 1 then renders
+function applyFilters(){currentPage=1;renderPage();}
+
+// Called by pagination buttons — sets page then renders (does NOT reset to 1)
+function goPage(p){currentPage=p;renderPage();window.scrollTo({top:200,behavior:'smooth'});}
+
+function resetFilters(){document.querySelectorAll('.filter-sidebar input[type=checkbox]').forEach(c=>c.checked=false);document.querySelector('input[name=rating]').checked=true;document.getElementById('rate-filter').value=400;document.getElementById('search-input').value='';updateRateLabel();applyFilters();}
+function clearQ(){document.getElementById('search-input').value='';applyFilters();}
+function removeCat(v){document.querySelector(`.cat-chk[value="${v}"]`).checked=false;applyFilters();}
+
+applyFilters();
+initFilterToggle();
+</script>
+</body>
+</html>

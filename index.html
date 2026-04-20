@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iSpani - Hire Skilled SA Students</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .hero-bg { background:linear-gradient(155deg,#062516 0%,#0d3d22 40%,#1a5c35 70%,#1a7a3a 100%);padding:96px 0 72px;position:relative;overflow:hidden; }
+    .hero-bg::before { content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 0h40v40H0V0zm40 40h40v40H40V40z'/%3E%3C/g%3E%3C/svg%3E"); }
+    .hero-inner { display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1; }
+    .hero-img-wrap { border-radius:24px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.4);position:relative; }
+    .hero-img-wrap img { width:100%;height:420px;object-fit:cover; }
+    .floating-badge { position:absolute;background:white;border-radius:16px;padding:14px 18px;box-shadow:0 8px 28px rgba(0,0,0,0.18);display:flex;align-items:center;gap:12px; }
+    .fb-top { top:20px;left:-20px; }
+    .fb-bottom { bottom:24px;right:-16px; }
+    .fb-num { font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:#1a7a3a; }
+    .fb-label { font-size:12px;color:#6b7280; }
+    .feature-strip { background:#f9fafb;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:20px 0; }
+    .feature-strip-inner { display:flex;justify-content:center;gap:56px;flex-wrap:wrap; }
+    .feature-item { display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#374151; }
+    .feature-dot { width:8px;height:8px;border-radius:50%;background:#22a44e; }
+    .section-actions { display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px; }
+    .how-section { background:#f9fafb;padding:80px 0; }
+    .cta-section { padding:80px 0;background:#f9fafb; }
+  </style>
+</head>
+<body>
+<div id="nav-root"></div>
+
+<!-- HERO -->
+<section class="hero-bg">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content anim-fade-up">
+        <div class="hero-tag" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);color:#6ee39b;padding:8px 18px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:0.5px;margin-bottom:24px;border:1px solid rgba(255,255,255,0.15);">South Africa's Student Freelance Marketplace</div>
+        <h1 class="font-head fw-800" style="font-size:clamp(38px,5vw,56px);color:white;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px">
+          Hire <span style="color:#6ee39b">Skilled SA Students.</span><br>Get Real Work Done.
+        </h1>
+        <p style="font-size:18px;color:rgba(255,255,255,0.75);line-height:1.7;margin-bottom:36px;max-width:480px">
+          Connect with talented university ICT students for web development, data analysis, cybersecurity, networking and more - at student rates.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:48px">
+          <a href="browse.html" class="btn" style="background:white;color:#1a5c35;padding:16px 32px;font-size:16px;font-weight:700;border-radius:999px;box-shadow:0 8px 28px rgba(0,0,0,0.2);display:inline-flex;align-items:center;gap:8px;">Browse Talent</a>
+          <a href="skillmatch.html" class="btn" style="background:rgba(255,255,255,0.12);color:white;border:2px solid rgba(255,255,255,0.3);padding:14px 28px;font-size:16px;font-weight:600;border-radius:999px;backdrop-filter:blur(8px);">✦ Try SkillMatch Wizard</a>
+        </div>
+        <div style="display:flex;gap:36px">
+          <div><div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:white">120+</div><div style="font-size:13px;color:rgba(255,255,255,0.6)">Students Registered</div></div>
+          <div><div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:white">340+</div><div style="font-size:13px;color:rgba(255,255,255,0.6)">Projects Completed</div></div>
+          <div><div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:white">4.8★</div><div style="font-size:13px;color:rgba(255,255,255,0.6)">Average Rating</div></div>
+        </div>
+      </div>
+      <div style="position:relative" class="anim-fade-up delay-2">
+        <div class="hero-img-wrap">
+          <img src="Images/Students.jpg" alt="Students working">
+        </div>
+        <div class="floating-badge fb-top"><div><div class="fb-num">⭐ 4.9</div><div class="fb-label">Top Rated</div></div></div>
+        <div class="floating-badge fb-bottom"><div style="font-size:24px">💰</div><div><div class="fb-num">R150/hr</div><div class="fb-label">Average Rate</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE STRIP -->
+<div class="feature-strip">
+  <div class="container">
+    <div class="feature-strip-inner">
+      <div class="feature-item"><span class="feature-dot"></span>Verified University Students</div>
+      <div class="feature-item"><span class="feature-dot"></span>Reviewed by Real Businesses</div>
+      <div class="feature-item"><span class="feature-dot"></span>Pay Only What You Need</div>
+      <div class="feature-item"><span class="feature-dot"></span>South African Talent</div>
+      <div class="feature-item"><span class="feature-dot"></span>Prices in Rands</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH + CATEGORIES -->
+<section style="background:#f9fafb;padding:48px 0 32px">
+  <div class="container">
+    <div style="max-width:680px;margin:0 auto;text-align:center">
+      <h2 class="font-head fw-800" style="font-size:20px;margin-bottom:18px;color:#111">Find the right student for any ICT task</h2>
+      <div class="search-bar" style="max-width:620px;margin:0 auto 28px">
+        <input type="text" id="hero-search" placeholder="Search by skill, name, or service type..." onkeydown="if(event.key==='Enter')doHeroSearch()">
+        <button class="search-btn" onclick="doHeroSearch()">Search</button>
+      </div>
+    </div>
+    <div class="category-pills" id="cat-pills" style="justify-content:center"></div>
+  </div>
+</section>
+
+<!-- FEATURED STUDENTS -->
+<section style="padding:80px 0">
+  <div class="container">
+    <div class="section-actions">
+      <div>
+        <div class="section-label">⭐ Top Talent</div>
+        <h2 class="section-title">Featured <span>Students</span></h2>
+        <p class="section-sub">Handpicked based on ratings, reviews, and portfolio quality.</p>
+      </div>
+      <a href="browse.html" class="btn btn-outline">View All Students →</a>
+    </div>
+    <div class="grid-4" id="featured-grid"></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="section-label">Simple Process</div>
+      <h2 class="section-title">How <span>iSpani</span> Works</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
+      <div class="how-card"><div class="how-icon">🔍</div><div class="how-num">Step 01</div><div class="how-title">Browse or Match</div><div class="how-desc">Search profiles manually or use our SkillMatch Wizard for personalised recommendations.</div></div>
+      <div class="how-card"><div class="how-icon">📋</div><div class="how-num">Step 02</div><div class="how-title">Review Profiles</div><div class="how-desc">View portfolios, read business reviews, check their degree and experience.</div></div>
+      <div class="how-card"><div class="how-icon">📞</div><div class="how-num">Step 03</div><div class="how-title">Book a Call</div><div class="how-desc">Book a short paid discovery call to discuss your project scope and requirements.</div></div>
+      <div class="how-card"><div class="how-icon">✅</div><div class="how-num">Step 04</div><div class="how-title">Get Work Done</div><div class="how-desc">Hire them for the project. Rate and review after successful completion.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section style="padding:80px 0">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="section-label">💬 Reviews</div>
+      <h2 class="section-title">What <span>Businesses</span> Say</h2>
+    </div>
+    <div class="grid-3" id="testimonials-grid"></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-banner">
+      <div>
+        <h2>Are you a university ICT student?</h2>
+        <p>Register on iSpani and start earning while you study. Build your portfolio. Make a difference.</p>
+        <div style="margin-top:24px;display:flex;gap:12px">
+          <a href="#" class="btn btn-primary">Register as Student</a>
+          <a href="browse.html" class="btn btn-outline" style="background:transparent;color:white;border-color:rgba(255,255,255,0.4)">Browse Platform</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-root"></div>
+<script src="data.js"></script>
+<script src="nav.js"></script>
+<script>
+document.getElementById('nav-root').innerHTML = renderNav('index.html');
+document.getElementById('footer-root').innerHTML = renderFooter();
+updateBadges();
+
+const CATEGORIES = [
+  {id:'all',label:'All Services',icon:'🌟'},{id:'webdev',label:'Web Dev',icon:'💻'},
+  {id:'data',label:'Data Analysis',icon:'📊'},{id:'database',label:'Database',icon:'🗃️'},
+  {id:'cybersecurity',label:'Cybersecurity',icon:'🔒'},{id:'networking',label:'Networking',icon:'🌐'},
+  {id:'appdev',label:'App Dev',icon:'📱'},{id:'itsupport',label:'IT Support',icon:'🛠️'}
+];
+document.getElementById('cat-pills').innerHTML = CATEGORIES.map(c=>`
+  <button class="cat-pill" onclick="window.location='browse.html?cat=${c.id}'">
+    <span class="pill-icon">${c.icon}</span>${c.label}
+  </button>`).join('');
+
+function doHeroSearch(){const q=document.getElementById('hero-search').value.trim();if(q)window.location.href=`browse.html?q=${encodeURIComponent(q)}`;}
+
+function renderStudentCard(s){
+  const discounted=s.discount?Math.round(s.hourlyRate*(1-s.discount/100)):null;
+  const wishlisted=isInWishlist(s.id);
+  return `
+  <div class="student-card" onclick="window.location='profile.html?id=${s.id}'">
+    <div class="card-photo-wrap">
+      <img src="${s.photo}" alt="${s.firstName}" loading="lazy">
+      <span class="card-badge-avail ${s.available?'badge-available':'badge-busy'}">${s.available?'● Available':'● Busy'}</span>
+      ${s.discount?`<span class="card-discount-badge">${s.discount}% OFF</span>`:''}
+      <button class="card-wishlist-btn ${wishlisted?'wishlisted':''}" onclick="event.stopPropagation();handleWishlist(this,${s.id})">${wishlisted?'♥':'♡'}</button>
+    </div>
+    <div class="card-body">
+      <div class="card-name">${s.firstName} ${s.lastName}</div>
+      <div class="card-degree">${s.degreeType} <strong>${s.degreeName}</strong> · Year ${s.yearOfStudy}</div>
+      <div class="card-service"><span class="card-service-icon">${SERVICE_ICONS[s.serviceCategory]||'💡'}</span>${s.service}</div>
+      <div class="skill-chips">${s.softSkills.map(sk=>`<span class="chip">${sk}</span>`).join('')}</div>
+      <div class="card-stats">
+        <div class="card-rating">${renderStars(s.rating)}<span class="rating-score">${s.rating}</span><span class="rating-count">(${s.reviewCount})</span></div>
+        <div class="card-rate">${s.discount?`<span class="original-rate">R${s.hourlyRate}</span><span class="discounted-rate">R${discounted}</span>`:`R${s.hourlyRate}`}<small>/hr</small></div>
+      </div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-outline btn-sm" onclick="addToCart(${s.id},'call')">📞 Book Call</button>
+        <button class="btn btn-primary btn-sm" onclick="addToCart(${s.id},'service')">+ Add to Cart</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function handleWishlist(btn,id){const added=toggleWishlist(id);btn.innerHTML=added?'♥':'♡';btn.classList.toggle('wishlisted',added);updateBadges();showToast(added?'Added to wishlist!':'Removed from wishlist');}
+
+const featured=[...STUDENTS].sort((a,b)=>b.rating-a.rating||b.reviewCount-a.reviewCount).slice(0,8);
+document.getElementById('featured-grid').innerHTML=featured.map(renderStudentCard).join('');
+
+const testimonials=[
+  {stars:5,text:"iSpani helped us find the perfect developer for our online store in under 2 days. The student was professional, fast, and affordable. Incredible value.",name:"Pieter van Zyl",company:"Van Zyl Logistics, Durban",photo:"https://images.unsplash.com/photo-1557862921-37829c790f19?w=80&q=80"},
+  {stars:5,text:"I was skeptical about hiring a student, but Amahle's data analysis work was better than anything I've seen from agencies at 10× the price. Highly recommend!",name:"Anne Marie",company:"AgriData Solutions, PE",photo:"https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&q=80"},
+  {stars:4,text:"The SkillMatch Wizard matched us with exactly the right networking student. Our office WiFi has never worked better. Great experience on the platform.",name:"Senzo Nkosi",company:"Nkosi Print Shop, Bloemfontein",photo:"https://images.unsplash.com/photo-1463453091185-61582044d556?w=80&q=80"}
+];
+document.getElementById('testimonials-grid').innerHTML=testimonials.map(t=>`
+  <div class="testimonial-card">
+    <div class="testimonial-stars">${'★'.repeat(t.stars)}${'☆'.repeat(5-t.stars)}</div>
+    <div class="testimonial-text">"${t.text}"</div>
+    <div class="testimonial-author">
+      <img class="testimonial-avatar" src="${t.photo}" alt="${t.name}">
+      <div><div class="testimonial-name">${t.name}</div><div class="testimonial-company">${t.company}</div></div>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>

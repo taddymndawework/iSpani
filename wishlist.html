@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist - iSpani</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="nav-root"></div>
+<div class="page-header">
+  <div class="container">
+    <h1>♡ My Wishlist</h1>
+    <p>Students you've saved for later. Compare and choose when you're ready.</p>
+  </div>
+</div>
+<div style="padding:48px 0 80px">
+  <div class="container">
+    <div id="wishlist-root"></div>
+  </div>
+</div>
+<div id="footer-root"></div>
+<script src="data.js"></script>
+<script src="nav.js"></script>
+<script>
+document.getElementById('nav-root').innerHTML=renderNav('wishlist.html');
+document.getElementById('footer-root').innerHTML=renderFooter();
+updateBadges();
+renderWishlist();
+
+function renderWishlist(){
+  const root=document.getElementById('wishlist-root');
+  if(!wishlist.length){
+    root.innerHTML=`
+      <div style="text-align:center;padding:100px 20px">
+        <div style="font-size:64px;margin-bottom:20px">♡</div>
+        <div class="empty-title">Your wishlist is empty</div>
+        <div class="empty-sub">Tap the ♡ heart icon on any student card to save them here for later.</div>
+        <a href="browse.html" class="btn btn-primary" style="margin-top:20px">Browse Talent</a>
+      </div>`;
+    return;
+  }
+
+  const saved=STUDENTS.filter(s=>wishlist.includes(s.id));
+  root.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px">
+      <div style="font-size:15px;color:#6b7280"><strong style="color:#111">${saved.length}</strong> student${saved.length!==1?'s':''} saved</div>
+      <button class="btn btn-ghost btn-sm" style="border:1.5px solid #e5e7eb;color:#e74c3c" onclick="clearAll()">Clear All</button>
+    </div>
+    <div class="grid-4">${saved.map(renderCard).join('')}</div>`;
+}
+
+function renderCard(s){
+  const disc=s.discount?Math.round(s.hourlyRate*(1-s.discount/100)):null;
+  return`<div class="student-card" onclick="window.location='profile.html?id=${s.id}'">
+    <div class="card-photo-wrap">
+      <img src="${s.photo}" alt="${s.firstName}" loading="lazy">
+      <span class="card-badge-avail ${s.available?'badge-available':'badge-busy'}">${s.available?'● Available':'● Busy'}</span>
+      ${s.discount?`<span class="card-discount-badge">${s.discount}% OFF</span>`:''}
+      <button class="card-wishlist-btn wishlisted" onclick="event.stopPropagation();removeFromWL(${s.id},this)">♥</button>
+    </div>
+    <div class="card-body">
+      <div class="card-name">${s.firstName} ${s.lastName}</div>
+      <div class="card-degree">${s.degreeType} <strong>${s.degreeName}</strong> · Year ${s.yearOfStudy}</div>
+      <div class="card-service"><span class="card-service-icon">${SERVICE_ICONS[s.serviceCategory]}</span>${s.service}</div>
+      <div class="skill-chips">${s.softSkills.map(sk=>`<span class="chip">${sk}</span>`).join('')}</div>
+      <div class="card-stats">
+        <div class="card-rating">${renderStars(s.rating)}<span class="rating-score">${s.rating}</span><span class="rating-count">(${s.reviewCount})</span></div>
+        <div class="card-rate">${s.discount?`<span class="original-rate">R${s.hourlyRate}</span><span class="discounted-rate">R${disc}</span>`:`R${s.hourlyRate}`}<small>/hr</small></div>
+      </div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-outline btn-sm" onclick="addToCart(${s.id},'call')">📞 Book Call</button>
+        <button class="btn btn-primary btn-sm" onclick="addToCart(${s.id},'service')">+ Add to Cart</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function removeFromWL(id,btn){
+  toggleWishlist(id);
+  updateBadges();
+  showToast('Removed from wishlist');
+  renderWishlist();
+}
+
+function clearAll(){
+  wishlist.length=0;
+  saveWishlist();
+  updateBadges();
+  renderWishlist();
+}
+</script>
+</body>
+</html>
